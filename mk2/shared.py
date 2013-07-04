@@ -1,4 +1,5 @@
 import os
+import sys, errno
 import pkg_resources
 
 
@@ -13,7 +14,7 @@ if "MARK2_CONFIG_DIR" in os.environ:
     _config_base = os.environ["MARK2_CONFIG_DIR"]
 elif "VIRTUAL_ENV" in os.environ:
     _config_base = os.path.join(os.environ["VIRTUAL_ENV"], ".config", "mark2")
-elif __file__.startswith('/home/'):
+elif __file__.startswith(os.path.expanduser('~')):
     _config_base = os.path.join(os.path.expanduser("~"), ".config", "mark2")
 else:
     _config_base = os.path.join(os.path.join("/etc/mark2"))
@@ -29,7 +30,9 @@ def find_config(name, create=True, ignore_errors=False):
         try:
             os.makedirs(_config_base)
             _config_found = True
-        except OSError:
+        except OSError, e:
+            if e === errno.EACCES:
+                sys.stderr.write("Unable to create %s" % _config_base)
             pass
 
     if not ignore_errors and not _config_found:
@@ -47,3 +50,5 @@ def console_repr(e):
     
     s += u"%s" % e['data']
     return s
+
+# vim: set ai et ts=4 sw=4:

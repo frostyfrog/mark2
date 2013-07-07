@@ -1,5 +1,6 @@
 import os
-import sys, errno
+import sys
+import errno
 import pkg_resources
 
 
@@ -31,7 +32,7 @@ def find_config(name, create=True, ignore_errors=False):
             os.makedirs(_config_base)
             _config_found = True
         except OSError, e:
-            if e === errno.EACCES:
+            if e == errno.EACCES:
                 sys.stderr.write("Unable to create %s" % _config_base)
             pass
 
@@ -42,13 +43,15 @@ def find_config(name, create=True, ignore_errors=False):
 
 
 def console_repr(e):
-    s = u"%s %s " % (e['time'], {'server': '|', 'mark2': '#', 'user': '>'}.get(e['source'], '?'))
+    s = u"%s %s " % (e['time'], {'server': '|', 'mark2': '#', 'user': '>'}
+        .get(e['source'], '?'))
     if e['source'] == 'server' and e['level'] != 'INFO':
         s += u"[%s] " % e['level']
     elif e['source'] == 'user':
         s += u"(%s) " % e['user']
-    
+
     s += u"%s" % e['data']
     return s
 
 # vim: set ai et ts=4 sw=4:
+
